@@ -9,64 +9,12 @@
 </head>
 <body ng-controller='ngctrl'>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">bootstrap-datepicker</div>
-                <div class="panel-body">
-                    <div class="alert alert-info">
-                        <a class="alert-link" href="http://eternicode.github.io/bootstrap-datepicker/">
-                            http://eternicode.github.io/bootstrap-datepicker/
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">text input</div>
-                                <div class="panel-body">
-                                    <datepicker type="input" language="zh-CN"></datepicker>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">component</div>
-                                <div class="panel-body">
-                                    <datepicker type="component" language="zh-CN" autoclose="false" >
-                                        <i class="glyphicon glyphicon-calendar"></i>
-                                    </datepicker>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">Embedded / inline</div>
-                                <div class="panel-body">
-                                    <datepicker type="inline" language="zh-CN"
-                                    start-date="2014-12-10"
-                                    end-date="2014-12-20"></datepicker>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">range</div>
-                                <div class="panel-body">
-                                    <datepicker type="range" language="zh-CN"></datepicker>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <form name='myform'>
+        <ng-datepicker name='frmDate' date='curDate' required>
+            <i class="glyphicon glyphicon-calendar"></i>
+        </ng-datepicker>
+        <span ng-show='isValid()'>Can not be empty</span>
+    </form>
 
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -78,10 +26,20 @@
     <script src="bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-CN.js"></script>
     <!--END PAGE COMPONENT-->
 
-    <script src="src/directives/angular-bootstrap-datepicker.js"></script>
     <script>
-        var ngapp = angular.module('ngapp', ['wsdpDirectives']);
-        ngapp.controller('ngctrl', function($scope) { });
+        angular.module('ngapp', ['ngDirectives']);
+        angular.module('ngDirectives', []);
+
+        angular.module('ngapp').
+            controller('ngctrl', function($scope) { 
+                $scope.curDate = '12/02/2014';
+                $scope.isValid = function() {
+                    return $scope.myform['frmDate'].$invalid;
+                }
+            });
+
+        $('.input-group .date') ;
     </script>
+    <script src="src/ng-bootstrap-datepicker.js"></script>
 </body>
 </html>

@@ -3,21 +3,21 @@ angular.module('wsdpDirectives', [])
         function() { 
 
             var default_option = {
-                format: 'yyyy-MM-dd',
+                format: 'yyyy-mm-dd',
                 language: 'zh-CN',
                 autoclose: true,
                 calendarWeeks: false,
-                clearBtn: true,
+                clearBtn: false,
                 startDate: '',
                 endDate: '',
                 forceParse: false,
-                keyboardNavigation: true,
+                keyboardNavigation: false,
                 minViewMode: 0,
                 multidate: false,
                 multidateSeparator: ',',
                 orientation: 'auto',
                 startView: 0,
-                todayBtn: true,
+                todayBtn: false,
                 todayHighlight: true,
                 weekStart: 0
             }
@@ -45,12 +45,12 @@ angular.module('wsdpDirectives', [])
                     weekStart: '@'
                 },
                 template: function(element, attrs) {
-                    var type = attrs['type'];
-                    if (!angular.isDefined(type) || type == null || type == '') {
+                    var type = attrs['tplType'];
+                    if (!angular.isDefined(type) || type === null || type === '') {
                         type = 'input';
                     }
 
-                    var template = '';
+                    var template = '<input type="text" />';
                     if (type == 'input') {
                         template = '<input type="text" class="form-control" />'; 
                     } else if (type == 'component') {
@@ -61,15 +61,11 @@ angular.module('wsdpDirectives', [])
                     } else if (type == 'inline') {
                         template = '<div></div>'
                     } else if (type == 'range') {
-
                         template = '<div class="input-daterange input-group" id="datepicker">';
                         template += '   <input type="text" class="input-sm form-control" name="start" />';
                         template += '   <span class="input-group-addon">to</span>';
                         template += '   <input type="text" class="input-sm form-control" name="end" />';
                         template += '</div>';
-
-                    } else {
-                        template = '<input type="text" />'; 
                     }
                     return template;
                 },
