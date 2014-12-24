@@ -10,10 +10,9 @@
 <body ng-controller='ngctrl'>
 
     <form name='myform'>
-        <ng-datepicker name='frmDate' date='curDate' required>
+        <ng-datepicker date='curDate' autoclose='false'> 
             <i class="glyphicon glyphicon-calendar"></i>
         </ng-datepicker>
-        <span ng-show='isValid()'>Can not be empty</span>
     </form>
 
 
@@ -32,10 +31,9 @@
 
         angular.module('ngapp').
             controller('ngctrl', function($scope) { 
-                $scope.curDate = '12/02/2014';
-                $scope.isValid = function() {
-                    return $scope.myform['frmDate'].$invalid;
-                }
+                $scope.curDate = '2014-5-14';
+                $scope.startDate = '2014-3-14';
+                $scope.endDate = '2014-6-26';
             });
 
         $('.input-group .date') ;
