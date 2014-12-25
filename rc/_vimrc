@@ -1,0 +1,301 @@
+" ==============================================
+" Created by Patrick
+" ammeyjohn@gmail.com
+" ==============================================
+
+" ==============================================
+" 基本设置
+" ==============================================
+
+" 确定VIM启动平台，windows或者linux 
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+    let g:isWindows = 1
+else
+    let g:isWindows = 0
+endif
+
+" 确定VIM启动方式，GUI或者Terminal 
+if has("gui_running")
+    let g:isGUI = 1
+else
+    let g:isGUI = 0
+endif
+
+" Set a map leader, it's possible to do extra key combinations
+let mapleader="'"
+
+" 关闭与VI的兼容
+set nocompatible
+
+" 设置默认编码
+set fenc=utf-8
+set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936
+
+" 设置历史记录数量
+set history=100
+
+" 在处理未保存或只读文件的时候，弹出确认
+set confirm
+
+" 共享剪贴板
+set clipboard+=unnamed
+
+" 不自动换行
+set nowrap
+
+" 允许退格键删除和tab操作 
+set smartindent
+set smarttab
+set expandtab
+set tabstop=4		" 设置制表符为4个空格
+set softtabstop=4	" 设置换行缩进4个空格
+set shiftwidth=4
+set backspace=2
+set textwidth=79
+
+" ==============================================
+" 字体和颜色
+" ==============================================
+
+"语法高亮
+syntax enable		
+syntax on
+
+"设置GUI显示字体和字体大小
+set guifont=Droid\ Sans\ Mono\ for\ Powerline
+
+" 使用配色方案desert
+colorscheme desert
+
+" 状态行颜色
+highlight StatusLine guifg=SlateBlue guibg=Yellow
+highlight StatusLineNC guifg=Gray guibg=White
+
+" ==============================================
+" 界面设置 
+" ==============================================
+
+set shortmess=atI	" 启动的时候不显示那个援助索马里儿童的提示
+set number      	" 显示行号
+
+" 状态行显示内容格式
+set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
+
+" 在状态行上显示光标所在位置的行号和列号
+set rulerformat=%20(%2*%<%f%=\ %m%r\ %3l\ %c\ %p%%%)		
+set laststatus=2    " 总是显示状态栏
+set ruler           " 在编辑过程中，在右下角显示光标位置的状态行
+
+set wildmenu		" 增强模式中的命令行自动完成操作
+set linespace=0		" 字符间插入的像素行数目
+set cmdheight=1		" 命令行（在状态行下）的高度，默认为1
+set backspace=2		" 使回格键（backspace）正常处理indent, eol, start等
+set whichwrap+=<,>,h,l  " 允许backspace和光标键跨越行边界
+
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0	
+set noerrorbells	" 不发出滴滴声
+
+" 在被分割的窗口间显示空白
+set fillchars=vert:\ ,stl:\ ,stlnc:\
+autocmd FileType c,cpp setl fdm=syntax | setl fen
+set foldmethod=syntax	" 选择代码折叠类型
+set foldlevel=100	" 启动vim时不自动折叠代码
+
+" ==============================================
+" 文件和文件夹 
+" ==============================================
+
+" 不备份文件
+set nobackup	
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" 自动设置目录为正在编辑的文件所在的目录
+set autochdir
+
+" 不要生成swap文件，当buffer被丢弃的时候隐藏它
+setlocal noswapfile
+set bufhidden=hide
+
+" ==============================================
+" 搜索和替换 
+" ==============================================
+set hlsearch		" 高亮显示搜索结果
+set incsearch		" 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索） 
+set matchtime=5		" 匹配括号高亮的时间（单位是十分之一秒）				
+set ignorecase		" 忽略大小写
+
+" 输入:set list命令显示内容
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
+set scrolloff=3		" 光标移动到buffer的顶部和底部时保持3行距离
+set novisualbell	" 不要闪烁
+set showmatch		" 设置自动匹配输入括号
+
+" ==============================================
+" 快捷键定义
+" ==============================================
+
+" 自定义快捷键关闭当前分割窗口
+" nmap <leader>q :q<CR>
+
+" 设置快捷键gs遍历各分割窗口
+" nnoremap <C-TAB> <C-W><C-W>
+
+" 设置快捷键将选中文本块复制至系统剪贴板
+vnoremap <C-C> "+y
+nnoremap yy "+y
+
+" 设置快捷键将系统剪贴板内容粘贴至vim
+nmap <C-V> "+p
+
+"Toggle Menu and Toolbar
+set guioptions-=m
+set guioptions-=T
+map <silent> <S-F2> :if &guioptions =~# 'T' <Bar>
+        \set guioptions-=T <Bar>
+        \set guioptions-=m <bar>
+    \else <Bar>
+        \set guioptions+=T <Bar>
+        \set guioptions+=m <Bar>
+    \endif<CR>
+
+" 设置F12转到方法定义
+nnoremap <F12> <C-]>
+
+" ==============================================
+" 插件配置
+" ==============================================
+
+" ==============================================
+" Vundle -- https://github.com/gmarik/vundle
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" NOTE: comments after Bundle command are not allowed..
+" ==============================================
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" Plugin
+Plugin 'rkulla/pydiction'
+Plugin 'mattn/emmet-vim'
+Plugin 'bling/vim-airline'
+Plugin 'scrooloose/nerdtree'
+Plugin 'taglist.vim'
+Plugin 'rizzatti/dash.vim'
+
+" Plugin 'minibufexpl.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+
+" ==============================================
+" airline setup
+" ==============================================
+"let g:airline_theme="molokai"
+let g:airline_theme="powerlineish"
+let g:airline_powerline_fonts=1
+" 开启tabline
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#left_sep=' '
+let g:airline#extensions#tabline#left_alt_sep='|'
+" tabline中buffer显示编号
+let g:airline#extensions#tabline#buffer_nr_show=1
+let g:airline#extensions#buffline#enabled=1
+let g:airline#extensions#bufferline#overwrite_variables=1
+
+" My preference with using buffers. See `:h hidden` for more details
+set hidden
+
+" To open a new empty buffer
+" This replaces :tabnew which I used to bind to this mapping
+nmap <C-n> :enew<cr>
+
+" Move to the next buffer
+nmap <C-TAB> :bnext<CR>
+
+" Move to the previous buffer
+nmap <S-TAB> :bprevious<CR>
+
+" Close the current buffer and move to the previous one
+" This replicates the idea of closing a tab
+nmap <Leader>q :bp <BAR> bd #<CR>
+
+" Show all open buffers and their status
+" nmap <leader>bl :ls<CR>
+
+" ==============================================
+" omni-completion
+" ==============================================
+"自动补全  
+set ofu=syntaxcomplete#Complete
+set completeopt=longest,menu
+"自动补全命令时候使用菜单式匹配列表  
+set wildmenu
+autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType java set omnifunc=javacomplete#Complet
+imap <silent> ` <C-X><C-O>
+
+" ==============================================
+" Pydiction
+" ==============================================
+filetype plugin on
+let g:pydiction_location='~/.vim/bundle/pydiction/complete-dict'
+
+" ==============================================
+" taglist 
+" ==============================================
+let Tlist_Show_One_File=1
+let Tlist_Exit_OnlyWindow=1
+
+" 设置F4打开Taglist
+nnoremap <F4> :Tlist<CR>
+
+" ==============================================
+" NERDTreeToggle setup
+" ==============================================
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeWinSize=32
+let NERDTreeIgnore=['\.pyc','\.swp']
+
+" ==============================================
+" emmet setup
+" ==============================================
+let g:user_emmet_expandabbr_key='<c-h>'  
+let g:user_emmet_complete_tag=1  
+let g:user_emmet_next_key='<c-n>'  
+let g:user_emmet_prev_key='<c-p>'  
+let g:user_emmet_settings = {  
+\  'html' : {  
+\    'filters' : 'html',  
+\    'snippets' : {  
+\      'bt' : "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\">\n    <title></title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0    \">\n    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\" media=\"screen\">\n    <!--[if lt IE 9]>\n      <script src=\"/assets/js/html5shiv.js\"></script>\n      <scrip    t src=\"/assets/js/respond.min.js\"></script>\n    <![endif]-->\n  </head>\n  <body>\n    ${cursor}${child}\n    <script src=\"js/jquery.min.js\"></script>\n    <script src=\"j    s/bootstrap.min.js\"></script>\n  </body>\n</html>",  
+\      'mn'      : "#include <functional>\n#include <algorithm>\n#include <iostream>\n#include <fstream>\n#include <sstream>\n#include <iomanip>\n#include <numeric>\n#include <cstring>\n#include <climits>\n#include <cassert>\n#include <cstdio>\n#include <string>\n#include <vector>\n#include <bitset>\n#include <queue>\n#include <stack>\n#include <cmath>\n#include <ctime>\n#include <list>\n#include <set>\n#include <map>\nusing namespace std;\ntypedef long long LL;\nconst int MOD =1e9 + 7;\nconst int INF = 0x3f3f3f3f;\n\nconst int MXN=1e6;\nint N,M;\n\nvoid Rush()\n{\n\tint T;\n\tscanf(\"%d\",&T);\n\tfor(int kas=1;kas<=T;++kas)\n\t{\n\t\tprintf(\"Case %d: \",kas);\n\t}\n}\nint main() \n{\n\t${cursor}\n\treturn 0;\n}\n",  
+\    },  
+\  },  
+\}  
