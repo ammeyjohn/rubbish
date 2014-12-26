@@ -68,26 +68,6 @@ angular.module('ngDirectives')
                 return option;
             }
 
-            // To format the date object to string with format 'yyyy-MM-dd HH:mm:ss'
-            var formatDate = function(date) {
-                if(!date || date === null) return '';
-                if(typeof date === 'string') {
-                    return date;
-                }
-
-                return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(); 
-            }
-
-            // To check whether the argument is type of date
-            var isDate = function(date) {
-                if(!date || date === null) return false;
-                if(typeof date === 'string') {
-                    var d = Date.parse(date);
-                    return !isNaN(d);
-                }
-                return false;
-            }
-
             // Define the option properties
             var option_define = {
                 autoclose: { type: 'boolean', value: true },
@@ -98,7 +78,7 @@ angular.module('ngDirectives')
                 daysOfWeekDisabled: { type: 'string' },
                 startDate: { type: 'string' },
                 endDate: { type: 'string' },
-                forceParse: { type: 'boolean', value: true },
+                forceParse: { type: 'boolean', value: false },
                 format: { type: 'string', value: 'yyyy-mm-dd' },
                 keyboardNavigation: { type: 'boolean', value: false },
                 minViewMode: { type: 'string' },
@@ -153,7 +133,7 @@ angular.module('ngDirectives')
                     element.datepicker()
                         .on('changeDate', function(e) {
                             if(new Date(scope.date) - e.date !== 0) {
-                                scope.date = formatDate(e.date);
+                                scope.date = moment(e.date).format('YYYY-MM-DD');
                             }
                         });
 
@@ -161,7 +141,7 @@ angular.module('ngDirectives')
                     scope.$watch('date', function(newValue, oldValue){
                         if(newValue !== oldValue) {
                             if(scope.date !== oldValue) {
-                                if(isDate(newValue)) {
+                                if(moment(newValue).isValid()) {
                                     element.datepicker('setDate', newValue);
                                 }
                             }
