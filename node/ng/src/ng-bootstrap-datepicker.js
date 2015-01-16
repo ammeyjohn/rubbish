@@ -43,17 +43,26 @@ angular.module('ngDirectives')
                         value = handle;
                     }
 
-                    if(value) {
+                    if(angular.isDefined(value)) {
                         if(typeof value !== define.type) {
                             value = attrParse(value, define.type);
                         }
                     } else {
                         value = define.value;
                     }
-                    option[key] = value;
 
-                    /* DEBUG */
-                    console.log(key + ' = ' + value);
+                    // If value is undefined, the property will not be
+                    // set to the option.
+                    if(angular.isDefined(value)) {
+                        option[key] = value;
+
+                        /* DEBUG */
+                        if (value === '') { value = '""'; }
+                        else if (typeof value === 'string') { 
+                            value = '"' + value + '"'; 
+                        }
+                        console.log(key + ' = ' + value);
+                    }
                 });
 
                 return option;
@@ -62,7 +71,23 @@ angular.module('ngDirectives')
             // Define the option properties
             var option_define = {
                 autoclose: { type: 'boolean', value: true },
-                language: { type: 'string', value: 'zh-CN' } 
+                language: { type: 'string', value: 'zh-CN' },
+                calendarWeeks: { type: 'boolean', value: false },
+                clearBtn: { type: 'boolean', value: false },
+                todayBtn: { type: 'boolean', value: false },
+                daysOfWeekDisabled: { type: 'string' },
+                startDate: { type: 'string' },
+                endDate: { type: 'string' },
+                forceParse: { type: 'boolean', value: false },
+                format: { type: 'string', value: 'yyyy-mm-dd' },
+                keyboardNavigation: { type: 'boolean', value: false },
+                minViewMode: { type: 'string' },
+                multidate: { type: 'boolean', value: false },
+                multidateSeparator: { type: 'string' },
+                orientation: { type: 'string' },
+                startView: { type: 'string' },
+                todayHighlight: { type: 'boolean', value: true },
+                weekStart: { type: 'number' }
             };
 
             return {
@@ -72,7 +97,23 @@ angular.module('ngDirectives')
                 scope: {
                     date: '=',
                     autoclose: '@',
-                    language: '@'
+                    language: '@',
+                    calendarWeeks: '@',
+                    clearBtn: '@',
+                    daysOfWeekDisabled: '@',
+                    startDate: '=',
+                    endDate: '=',
+                    forceParse: '@',
+                    format: '@',
+                    keyboardNavigation: '@',
+                    minViewMode: '@',
+                    multidate: '@',
+                    multidateSeparator: '@',
+                    orientation: '@',
+                    startView: '@',
+                    todayBtn: '@',
+                    todayHighlight: '@',
+                    weekStart: '@'
                 },
                 template: function(element, attrs) {
                     var template = '';
@@ -82,10 +123,30 @@ angular.module('ngDirectives')
                     template += '</div>'; 
                     return template;
                 },
-                link: function(scope, element, attrs, ngModel) {
+                link: function(scope, element, attrs) {
+                    // Initialize the component
                     var option = optionAssign(option_define, scope);
                     element.datepicker(option);
                     element.datepicker('setDate', scope.date);
+
+                    // Attach event on the component
+                    element.datepicker()
+                        .on('changeDate', function(e) {
+                            if(new Date(scope.date) - e.date !== 0) {
+                                scope.date = moment(e.date).format('YYYY-MM-DD');
+                            }
+                        });
+
+                    // Create wather to monitor scope changed
+                    scope.$watch('date', function(newValue, oldValue){
+                        if(newValue !== oldValue) {
+                            if(scope.date !== oldValue) {
+                                if(moment(newValue).isValid()) {
+                                    element.datepicker('setDate', newValue);
+                                }
+                            }
+                        } 
+                    });
                 }
             };
         });
