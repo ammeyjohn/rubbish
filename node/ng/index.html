@@ -4,40 +4,38 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="bower_components/bootstrap-datepicker/css/datepicker3.css">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body ng-controller='ngctrl'>
 
-    <form name='myform'>
-        <ng-datepicker date='curDate' today-btn='true' clear-btn='true'> 
-            <i class="glyphicon glyphicon-calendar"></i>
-        </ng-datepicker>
-    </form>
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fin</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <input type="text" ng-model='curDate'>
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/moment/min/moment-with-locales.min.js"></script>
 
     <!--BEGIN PAGE COMPONENT-->
-    <script src="bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-    <script src="bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-CN.js"></script>
     <!--END PAGE COMPONENT-->
 
     <script>
-        angular.module('ngapp', ['ngDirectives']);
-        angular.module('ngDirectives', []);
+        angular.module('ngapp', [])
+            .controller('ngctrl', function($scope) { 
 
-        angular.module('ngapp').
-            controller('ngctrl', function($scope) { 
-                $scope.curDate = '2014-5-14';
-                $scope.startDate = '2014-3-14';
-                $scope.endDate = '2014-6-26';
             });
     </script>
-    <script src="src/ng-bootstrap-datepicker.js"></script>
 </body>
 </html>
