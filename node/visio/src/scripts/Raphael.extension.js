@@ -1,11 +1,30 @@
-(function(R){
+(function(R, $){
+
+    /**
+     * Functionility
+     */
+    R.el.is = function (type) { return this.type == (''+type).toLowerCase(); };
+    R.el.o = function () { this.ox = this.x(); this.oy = this.y(); return this; };
+
+    /**
+     * Get the x, y coordinate of elememt
+     */
+    R.el.x = function(x) { return this.is('circle') ? this.attr('cx') : this.attr('x'); }
+    R.el.y = function(y) { return this.is('circle') ? this.attr('cy') : this.attr('y'); }
+
+    /**
+     * Set the coordinate of element
+     */
+    R.el.setCoord = function(x, y) {
+
+    }
 
     /**
      * Another one of my core extensions.
      * Raphael has getBBox(), I guess the "B" stands for Basic,
      * because I'd say the "A" in getABox() here stands for Advanced.
      */
-    var getABox = function () {
+    R.el.getABox = function () {
 
         var b = this.getBBox(); // thanks, I'll take it from here...
 
@@ -53,68 +72,61 @@
         return o;
     }
 
-    /**
-     * Get or set the coordinate x of element.
-     */
-    var x = function(x) {
-        if(x && x != null) {
-            if(this.is('circle')) {
-                this.attr('cx', x);
-            } else {
-                this.attr('x', x);
-            }
-            return this;   
-        } else {
-            return this.is('circle') ? this.attr('cx') : this.attr('x');
-        }
-    }
-
-    /**
-     * Get or set the coordinate y of element.
-     */
-    var y = function(y) {
-        if(y && y != null) {
-            if(this.is('circle')) {
-                this.attr('cy', y);
-            } else {
-                this.attr('y', t);
-            }
-            return this;   
-        } else {
-            return this.is('circle') ? this.attr('cy') : this.attr('y');
-        }
-    }
 
     /**
      * Routine drag-and-drop. Just el.draggable()
      * So instead of defining move, start, end and calling this.drag(move, start, end)
      */
-    var draggable = function () {
-        var onStart = function() {
-            this.o().toFront();
-        }
-        var onMove = function(dx, dy) {
-            moveTo(this, this.ox + dx, this.oy + dy);
-        }
+    R.el.draggable = function (option) {
 
-        var onEnd = function() {}
+        // Extend the option with default value
+        var opt = $.extend(true, { margin: 0 }, option || {});
+
+        var onStart = function() {
+            // store original pos, and bring the element to top
+            this.o().toFront();
+            
+            // Make the element transparent when dragging.
+            if(opt.opacity) {
+                this.attr('opacity', opt.opacity);
+            }
+        },
+        onMove = function(dx, dy, mx, my) {
+            var b = this.getABox();
+            var x = this.ox + dx;
+            var y = this.oy + dy;
+
+            var boundary = opt.boundary || {
+                top:    b.offset.top,
+                left:   b.offset.left,
+                bottom: this.paper.height + b.offset.top,
+                right:  this.paper.width + b.offset.left
+            };
+
+            var stroke_width = this.attr('stroke-width');
+            var r = this.is('circle') ? b.width / 2 : 0;
+            x = Math.max(x, boundary.left + r - stroke_width + opt.margin);
+            y = Math.max(y, boundary.top + r - stroke_width + opt.margin);
+            x = Math.min(x, boundary.right + r - b.width - stroke_width - stroke_width - opt.margin);
+            y = Math.min(y, boundary.bottom + r - b.height - stroke_width - stroke_width - opt.margin);
+
+            this.moveTo(x, y);
+        },
+        onEnd = function() {
+            // Restore the opaque element
+            this.attr('opacity', 1.0);
+        }
         this.drag(onMove, onStart, onEnd);
     }
 
     /**
      * Move element to (x, y)
      */
-    var moveTo = function (el, x, y) {
-        el.x(x).y(y);
+    R.el.moveTo = function (x, y) {
+        var coord = { };
+        if(x) { coord.x = x; coord.cx = x; }
+        if(y) { coord.y = y; coord.cy = y; }
+        return this.attr(coord);
     }
     
-    /**
-     * Export all functionility
-     */
-    R.el.is = function (type) { return this.type == (''+type).toLowerCase(); };
-    R.el.o = function () { this.ox = this.x(); this.oy = this.y(); return this; };
-    R.el.x = x;
-    R.el.y = y;
-    R.el.getABox = getABox;
-    R.el.draggable = draggable;
-})(Raphael)
+})(Raphael, jQuery)

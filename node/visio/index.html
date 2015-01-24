@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <div class="canvas debug"></div>
+    <div id="canvas" class="canvas"></div>
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -16,10 +16,21 @@
     <script src="src/scripts/Raphael.extension.js"></script>
     <script>
         $(function(){
-            var canvas = $('.canvas.debug');
-            var paper = Raphael(canvas[0]);
+            var paper = Raphael('canvas');
             var circle = paper.circle(100, 100, 50).attr('fill', 'red');
-            circle.draggable();
+            circle.draggable({
+                opacity: 0.3, 
+                margin: 20,
+                boundary: {
+                    left: 100,
+                    right: 600,
+                    top: 200,
+                    bottom: 600
+                }
+            });
+
+            var rect = paper.rect(300, 300, 100, 50).attr('fill', 'blue');
+            rect.draggable();
         });
     </script>
 </body>
