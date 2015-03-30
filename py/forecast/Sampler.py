@@ -15,7 +15,7 @@ def load_csv(sample_file, input_count):
     with open(sample_file, 'rU') as csvfile:
         data = csv.reader(csvfile)
         for row in data:
-            inputs.append(map(int, row[0:input_count]))
-            outputs.append(row[len(row)-1])
+            inputs.append(map(float, row[0:input_count]))
+            outputs.append(float(row[len(row)-1]))
 
     return inputs, outputs
