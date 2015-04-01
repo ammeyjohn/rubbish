@@ -9,11 +9,12 @@ import sampler
 import pandas as pd
 
 # Defines the parameters
-windowSize = 10
+windowSize = 5
+delta_error = 0.005
 
 # Defines the neural count for each layer
-inLayerCount = 2
-hiddenLayerCount = 3
+inLayerCount = windowSize + 1
+hiddenLayerCount = inLayerCount * 2
 outLayerCount = 1
 
 # Create recurrent network
@@ -32,33 +33,39 @@ net.addConnection(FullConnection(net['hidden'], net['out'], name='hidden_to_out'
 net.addRecurrentConnection(FullConnection(net['hidden'], net['hidden'], name='recurrent'))
 net.sortModules()
 
-# Create bp trainer
-# trainer = BackpropTrainer(net, None)
-
 # Load sample data as Series
-ts = sampler.load_csv('data/series.csv')
-print(ts.head(10))
-
-# Get the min and max value in series
-vmin = ts.min(axis=0)
-vmax = ts.max(axis=0)
-print 'min = %f, max = %f' % (vmin, vmax)
-
-# Normalize
-ts = (ts - vmin) / (vmax - vmin)
-print(ts.head(10))
-
-# Create window size dataset
-mtx = {}
-for i in range(0, windowSize):
-    mtx[i] = ts.shift(i)
-
-df = pd.DataFrame(mtx)
-print df.head(20)
+df = sampler.load_csv('data/sample.csv')
+print(df.head())
+print(df.index[0])
+print(df['col0'][0])
+print(df['col0'])
+print(df.size)
 
 # Create datasets
-ds = SequentialDataSet(2, 1)
+#ds = SequentialDataSet(inLayerCount, outLayerCount)
+ds.newSequence()
 
-for row in range(windowSize, 100):
-    for col in range(windowSize, 0, -1):
-        pass
+idx = df.index.tolist()
+print(len(idx))
+
+for row in range(0, len(idx)):
+
+    _in = [idx[row]]
+    _out = [df.iloc[row, 0]]
+
+    for col in range(1, 6):
+        _in.append(df.iloc[row, col])
+
+    ds.addSample(_in, _out)
+
+ds.endOfData()
+
+# Create bp trainer
+trainer = BackpropTrainer(net, ds)
+
+# Trains the datasets
+error = 1.0
+while error > delta_error:
+    error = trainer.train()
+    print 'Error = %f' % error
+
