@@ -14,4 +14,8 @@ def load_csv(file_name):
         print 'File "%s" does not exist.' % file_name
         return
 
-    return pd.Series.from_csv(file_name)
+    return pd.Series.from_csv(file_name,
+                              header=None,
+                              index_col=0,
+                              parse_dates=True,
+                              infer_datetime_format=True)
