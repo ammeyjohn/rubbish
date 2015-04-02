@@ -4,13 +4,13 @@ from pybrain.structure import RecurrentNetwork
 from pybrain.structure import LinearLayer, SigmoidLayer
 from pybrain.structure import FullConnection
 from pybrain.supervised.trainers import BackpropTrainer
-from pybrain.datasets.sequential import SequentialDataSet
+from pybrain.datasets.sequential import SequentialDataSet, SupervisedDataSet
 import sampler
 import pandas as pd
 
 # Defines the parameters
 windowSize = 5
-delta_error = 0.005
+delta_error = 0.0005
 
 # Defines the neural count for each layer
 inLayerCount = windowSize + 1
@@ -35,15 +35,11 @@ net.sortModules()
 
 # Load sample data as Series
 df = sampler.load_csv('data/sample.csv')
-print(df.head())
-print(df.index[0])
-print(df['col0'][0])
-print(df['col0'])
-print(df.size)
 
 # Create datasets
-#ds = SequentialDataSet(inLayerCount, outLayerCount)
-ds.newSequence()
+# ds = SequentialDataSet(inLayerCount, outLayerCount)
+# ds.newSequence()
+ds = SupervisedDataSet(inLayerCount, outLayerCount)
 
 idx = df.index.tolist()
 print(len(idx))
@@ -58,7 +54,7 @@ for row in range(0, len(idx)):
 
     ds.addSample(_in, _out)
 
-ds.endOfData()
+# ds.endOfData()
 
 # Create bp trainer
 trainer = BackpropTrainer(net, ds)
@@ -69,3 +65,5 @@ while error > delta_error:
     error = trainer.train()
     print 'Error = %f' % error
 
+res = net.activate(_in)
+print 'Result = %f, Expect = %f' % (res, _out[0])
