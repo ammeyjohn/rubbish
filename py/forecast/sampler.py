@@ -14,4 +14,4 @@ def load_csv(file_name):
         print 'File "%s" does not exist.' % file_name
         return
 
-    return pd.DataFrame.from_csv(file_name, index_col=0)
+    return pd.Series.from_csv(file_name, index_col=0, header=0)

@@ -1,23 +1,27 @@
 __author__ = 'yuanjie'
 
+import math
 from pybrain.structure import RecurrentNetwork
 from pybrain.structure import LinearLayer, SigmoidLayer
 from pybrain.structure import FullConnection
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets.sequential import SequentialDataSet, SupervisedDataSet
 import sampler
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 # Defines the parameters
-windowSize = 5
-delta_error = 0.0005
+windowSize = 2
+delta_error = 0.05
 
 # Defines the neural count for each layer
-inLayerCount = windowSize + 1
-hiddenLayerCount = inLayerCount * 2
+inLayerCount = 2
 outLayerCount = 1
+hiddenLayerCount = 3
 
 # Create recurrent network
+print 'Creating recurrent network ...'
 net = RecurrentNetwork()
 
 # Add neural module
@@ -34,36 +38,44 @@ net.addRecurrentConnection(FullConnection(net['hidden'], net['hidden'], name='re
 net.sortModules()
 
 # Load sample data as Series
-df = sampler.load_csv('data/sample.csv')
+print 'Loading sample data from csv file ...'
+# ts = sampler.load_csv('data/series.csv')
+
+i1 = np.sin(np.arange(0, 20))
+i2 = np.sin(np.arange(0, 20)) * 2
+
+t1 = np.ones([1, 20])
+t2 = np.ones([1, 20]) * 2
+
+input = np.array([i1, i2, i1, i2]).reshape(20 * 4, 1)
+target = np.array([t1, t2, t1, t2]).reshape(20 * 4, 1)
+
+df = pd.DataFrame(input)
+print df.head(20)
+df.plot()
+plt.show()
 
 # Create datasets
-# ds = SequentialDataSet(inLayerCount, outLayerCount)
-# ds.newSequence()
-ds = SupervisedDataSet(inLayerCount, outLayerCount)
+print 'Preparing dataset ...'
+# ts = sampler.load_csv('data/series.csv')
+ds = SequentialDataSet(inLayerCount, outLayerCount)
+ds.newSequence()
+# ds = SupervisedDataSet(inLayerCount, outLayerCount)
 
-idx = df.index.tolist()
-print(len(idx))
+for row in range(0, 80):
+    ds.addSample(input[row], target[row])
 
-for row in range(0, len(idx)):
-
-    _in = [idx[row]]
-    _out = [df.iloc[row, 0]]
-
-    for col in range(1, 6):
-        _in.append(df.iloc[row, col])
-
-    ds.addSample(_in, _out)
-
-# ds.endOfData()
+ds.endOfData()
 
 # Create bp trainer
 trainer = BackpropTrainer(net, ds)
 
 # Trains the datasets
+print 'Training ...'
 error = 1.0
 while error > delta_error:
     error = trainer.train()
     print 'Error = %f' % error
 
-res = net.activate(_in)
-print 'Result = %f, Expect = %f' % (res, _out[0])
+res = net.activate(input)
+print 'Result = %f' % res
