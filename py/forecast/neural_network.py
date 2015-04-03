@@ -12,13 +12,14 @@ import pandas as pd
 import sampler
 
 # Defines the parameters
+columns = 5
 windowSize = 2
-delta_error = 0.1
+delta_error = 0.0005
 
 # Defines the neural count for each layer
-inLayerCount = 2
+inLayerCount = 3
 outLayerCount = 1
-hiddenLayerCount = 3
+hiddenLayerCount = 6
 
 # Create recurrent network
 print 'Creating recurrent network ...'
@@ -39,7 +40,7 @@ net.sortModules()
 
 # Load sample data as Series
 print 'Loading sample data from csv file ...'
-df = sampler.load_csv_frame('data/series.csv')
+df = sampler.load_csv_frame('data/series30.csv')
 print df.head()
 
 # Normalize
@@ -70,10 +71,7 @@ ds.newSequence()
 # ds = SupervisedDataSet(inLayerCount, outLayerCount)
 
 for row in df.itertuples(index=False):
-    print row
-    print row[0:2]
-    print row[2]
-    ds.addSample(row[0:2], row[2])
+    ds.addSample(row[0:columns-2], row[columns-2])
 
 ds.endOfData()
 
@@ -82,10 +80,20 @@ trainer = BackpropTrainer(net, ds)
 
 # Trains the datasets
 print 'Training ...'
+epoch = 5000
 error = 1.0
-while error > delta_error:
+while error > delta_error and epoch >= 0:
     error = trainer.train()
-    print 'Error = %f' % error
+    epoch -= 1
+    print 'Epoch = %d, Error = %f' % (epoch, error)
 
-res = net.activate([0.63, 0.6])
-print 'Result = %f, Expect = %f' % (res, 0.137)
+sum_err = 0
+for row in df.itertuples(index=False):
+    result = net.activate(row[0:columns-2])
+    expect = row[columns-2]
+    error = abs(expect - result)
+    sum_err = sum_err + error
+    print 'Result = %f, Expect = %f, Error = %f' % (result, expect, error)
+
+avg_err = sum_err / len(df)
+print 'AvgError = %f' % avg_err
