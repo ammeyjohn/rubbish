@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sampler
+import weather
 
 # Defines the parameters
 columns = 5
@@ -38,10 +39,16 @@ net.addConnection(FullConnection(net['hidden'], net['out'], name='hidden_to_out'
 net.addRecurrentConnection(FullConnection(net['hidden'], net['hidden'], name='recurrent'))
 net.sortModules()
 
-# Load sample data as Series
+# Load weather data as DataFrame
+print 'Loading weather data from website ...'
+wdf = weather.get_weather('suzhou', '2013-9-1', '2013-9-10')
+print wdf.head()
+
+# Load sample data as DataFrame
 print 'Loading sample data from csv file ...'
 df = sampler.load_csv_frame('data/series30.csv')
 print df.head()
+
 
 # Normalize
 for col_name in df.columns:
