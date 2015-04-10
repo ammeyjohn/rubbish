@@ -13,7 +13,7 @@ import sampler
 import weather
 
 # Defines the parameters
-columns = 5
+columns = 3
 windowSize = 2
 delta_error = 0.0005
 
@@ -39,11 +39,6 @@ net.addConnection(FullConnection(net['hidden'], net['out'], name='hidden_to_out'
 net.addRecurrentConnection(FullConnection(net['hidden'], net['hidden'], name='recurrent'))
 net.sortModules()
 
-# Load weather data as DataFrame
-print 'Loading weather data from website ...'
-wdf = weather.get_weather('suzhou', '2013-9-1', '2013-9-10')
-print wdf.head()
-
 # Load sample data as DataFrame
 print 'Loading sample data from csv file ...'
 df = sampler.load_csv_frame('data/series30.csv')
@@ -58,8 +53,8 @@ for col_name in df.columns:
     df[col_name] = (df[col_name] - col_min) / (col_max - col_min)
 
 print df.head()
-df.plot()
-plt.show()
+# df.plot()
+# plt.show()
 
 # i1 = np.sin(np.arange(0, 20))
 # i2 = np.sin(np.arange(0, 20)) * 2
@@ -102,5 +97,4 @@ for row in df.itertuples(index=False):
     sum_err = sum_err + error
     print 'Result = %f, Expect = %f, Error = %f' % (result, expect, error)
 
-avg_err = sum_err / len(df)
-print 'AvgError = %f' % avg_err
+print 'Total Error = %f' % sum_err

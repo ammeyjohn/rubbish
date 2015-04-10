@@ -45,7 +45,7 @@ def get_weather(code, start, end):
     :return: Returns the weather data of DataFrame.
     """
 
-    df = None
+    gdf = None
 
     sdate = parser.parse(start)
     edate = parser.parse(end)
@@ -79,14 +79,15 @@ def get_weather(code, start, end):
         df2 = df1.set_index(rng2)
         # print df2.head()
 
-        if df is None:
-            df = df2
-
-        # Append rows
-        df.append(df2)
-
+        gdf = df2 if gdf is None else gdf.append(df2)
         cdate = cdate + timedelta(days=1)
 
-    return df
+    return gdf
 
 
+if __name__ == '__main__':
+
+    code = 'suzhou'
+    df = get_weather(code, '2013-9-30', '2013-10-6')
+    weather_csv_name = 'data/weather_%s.csv' % code
+    df.to_csv(weather_csv_name)
