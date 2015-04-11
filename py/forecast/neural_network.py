@@ -2,7 +2,7 @@ __author__ = 'yuanjie'
 
 import math
 from pybrain.structure import RecurrentNetwork
-from pybrain.structure import LinearLayer, SigmoidLayer
+from pybrain.structure import LinearLayer, SigmoidLayer, TanhLayer
 from pybrain.structure import FullConnection
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets.sequential import SequentialDataSet, SupervisedDataSet
@@ -29,6 +29,7 @@ net = RecurrentNetwork()
 # Add neural module
 net.addInputModule(LinearLayer(inLayerCount, name='in'))
 net.addModule(SigmoidLayer(hiddenLayerCount, name='hidden'))
+# net.addModule(TanhLayer(hiddenLayerCount, name='hidden'))
 net.addOutputModule(LinearLayer(outLayerCount, name='out'))
 
 # Add neural connection
@@ -82,19 +83,25 @@ trainer = BackpropTrainer(net, ds)
 
 # Trains the datasets
 print 'Training ...'
-epoch = 5000
+epoch = 1000
 error = 1.0
 while error > delta_error and epoch >= 0:
     error = trainer.train()
     epoch -= 1
     print 'Epoch = %d, Error = %f' % (epoch, error)
 
-sum_err = 0
+# To store the epoch error
+err_array = []
+
 for row in df.itertuples(index=False):
     result = net.activate(row[0:columns-2])
     expect = row[columns-2]
     error = abs(expect - result)
-    sum_err = sum_err + error
+    err_array.append(error)
     print 'Result = %f, Expect = %f, Error = %f' % (result, expect, error)
 
-print 'Total Error = %f' % sum_err
+err_df = pd.DataFrame(err_array)
+err_df.plot()
+plt.show()
+
+print 'Sum Error = %f' % err_df.sum(axis=0)
