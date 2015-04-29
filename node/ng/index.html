@@ -13,14 +13,26 @@
                 <div class="panel-heading">Bi-Director binding</div>
                 <div class="panel-body">
                     <form novalidate name="myform">
-                        <div class="form-group" ng-class="myform.email.$invalid ?
-                            'has-error' : 'has-success'">
+                        <div class="form-group"
+                            ng-class="{ 
+                            'has-error': myform.email.$dirty && myform.email.$invalid, 
+                            'has-success': myform.email.$dirty && myform.email.$valid
+                            }">
                             <label class="control-label" name="email">Your email</label>
                             <input class="form-control" type="email" name="email"
                             ng-model="email" placeholder="Email Address" required/>
-                            <span class="help-block" ng-show="myform.email.$error.email">The format of email is invalid.</span>
-                            <span class="help-block" ng-show="myform.email.$error.required">The field email is required.</span>
+                            <div ng-messages="myform.email.$error"
+                                ng-messages-multiple>
+                                <span class="help-block" ng-message="email">The format of email is invalid.</span>
+                                <span class="help-block" ng-message="required">The field email is required.</span>
+                            </div>
                         </div>
+                        <pre>
+                            $valid: {{myform.email.$valid}}
+                            $invalid: {{myform.email.$invalid}}
+                            $dirty: {{myform.email.$dirty}}
+                            $error: {{myform.email.$error}}
+                        </pre>
                         <button class="btn btn-default" ng-click="show()">Click Me</button>
                     </form>
                 </div>
@@ -42,10 +54,11 @@
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-messages/angular-messages.min.js"></script>
     <script>
-        angular.module('ngapp', [])
+        angular.module('ngapp', ['ngMessages'])
             .controller('ngctrl', function($scope) { 
-                $scope.email = "ssss";
+                $scope.email = "";
 
                 $scope.show = function () {
                     alert($scope.email);
