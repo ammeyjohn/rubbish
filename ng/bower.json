@@ -1,0 +1,24 @@
+{
+  "name": "ng",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ammeyjohn/rubbish",
+  "authors": [
+    "Patrick <ammeyjohn@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.4",
+    "angular": "~1.3.15",
+    "angular-messages": "~1.3.15",
+    "angular-bootstrap": "~0.12.1",
+    "angular-ui-utils": "~0.2.3"
+  }
+}
