@@ -1,19 +1,35 @@
 __author__ = 'yuanjie'
 
 
+from datetime import date
 import pandas as pd
-import sampler
-import weather
+import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
 
-    # wdf = weather.get_weather('suzhou', '2013-9-30', '2013-10-6')
-    # wdf.to_csv('data/weather_suzhou.csv')
+    start_date = date(2013, 5, 1)
+    end_date = date(2013, 6, 1)
 
-    # df = sampler.load_csv_frame('data/series.csv')
-    # df30 = df.resample('30min')
-    # df30.to_csv('data/series30.csv')
+    # Read data from csv files
+    df1 = pd.read_csv('data/series_xc_1.csv', index_col=[0], parse_dates=[0])
+    df2 = pd.read_csv('data/series_xc_2.csv', index_col=[0], parse_dates=[0])
 
+    df1.head()
+
+    # Create date ranges
+    drange = pd.date_range(start=start_date, end=end_date, freq='2min', closed='left')
+
+    # Combine all data columns index with date
+    df = df1.reindex(drange)
+    df.head()
+    df = df.merge(df2.reindex(drange))
+
+    # DEBUG: head
+    df.head()
+
+    # Draw plot
+    df.plot()
+    plt.show()
 
     pass
