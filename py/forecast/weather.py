@@ -33,8 +33,12 @@ def download(url):
     :return: Returns the html string.
     """
 
-    req = urllib2.Request(url)
-    return urllib2.urlopen(req).read()
+    proxy = urllib2.ProxyHandler({
+        'http': 'http://theironislands.f.getqujing.net:49519'
+    })
+    opener = urllib2.build_opener(proxy)
+    urllib2.install_opener(opener)
+    return urllib2.urlopen(url).read()
 
 
 def get_weather(code, start, end):
@@ -88,6 +92,6 @@ def get_weather(code, start, end):
 if __name__ == '__main__':
 
     code = 'suzhou'
-    df = get_weather(code, '2013-9-30', '2013-10-6')
+    df = get_weather(code, '2014-5-1', '2014-5-31')
     weather_csv_name = 'data/weather_%s.csv' % code
     df.to_csv(weather_csv_name)
