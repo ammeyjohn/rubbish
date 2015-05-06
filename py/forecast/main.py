@@ -5,6 +5,10 @@ from datetime import date
 import pandas as pd
 import matplotlib.pyplot as plt
 
+in_count = 4
+hidden_count = 3
+out_count = 1
+
 
 start_date = date(2014, 5, 1)
 end_date = date(2014, 5, 12)
@@ -30,26 +34,26 @@ print df2.head()
 # Combine df1 and df2
 df = df1.join(df2)
 
-# Calculate the sum of the every column
-df = df.assign(
-    total=lambda t: t.value1 + t.value2
-)
-df.drop(df.columns[[0, 1]], axis=1, inplace=True)
-df.index.names = ['date']
-print "==========Series=========="
-print df.head()
-
 # Load weather date
 wh = pd.read_csv('data/weather_suzhou.csv', index_col=0, header=0, parse_dates=0)
 
 # Slice the weather data from start to end
-wh = wh.reindex(drange, method='bfill')
+wh = wh.resample('1H')
 print "==========Weather Data=========="
 print wh.head()
 
 # Combine df and wh
-df = df.join(wh[['TemperatureF', 'Humidity']])
+df = df.join(wh[['TemperatureC', 'Humidity']])
 print "==========Sample Data=========="
+print df.head()
+
+# Calculate the sum of the every column
+df = df.assign(
+    total=lambda t: t.value1 + t.value2
+)
+#df.drop(df.columns[[0, 1]], axis=1, inplace=True)
+df.index.names = ['date']
+print "==========Series=========="
 print df.head()
 
 # Normalize
@@ -57,11 +61,18 @@ for col_name in df.columns:
     print 'Normalizing the column %s ...' % col_name
     col_min = df[col_name].min()
     col_max = df[col_name].max()
-    df[col_name] = (df[col_name] - col_min) / (col_max - col_min)
+    col_std = df[col_name].std()
+    df[col_name] = (df[col_name] - col_min) / col_std
+
+# Fill all nan
+df.fillna(method='bfill', inplace=True)
 
 # DEBUG: print plot
 #df.plot()
 #plt.show()
+
+# DEBUG: save to csv file
+df.to_csv('data/df.csv')
 
 
 # ========================================================
@@ -78,9 +89,9 @@ from pybrain.structure import FullConnection
 net = FeedForwardNetwork()
 
 # Create layer
-in_layer = LinearLayer(2)
-hidden_layer = SigmoidLayer(3)
-out_layer = LinearLayer(1)
+in_layer = LinearLayer(in_count)
+hidden_layer = SigmoidLayer(hidden_count)
+out_layer = LinearLayer(out_count)
 
 net.addInputModule(in_layer)
 net.addModule(hidden_layer)
@@ -103,11 +114,9 @@ net.sortModules()
 
 from pybrain.datasets import SupervisedDataSet
 
-ds = SupervisedDataSet(2, 1)
+ds = SupervisedDataSet(in_count, out_count)
 for row in df.itertuples(index=False):
-    print row[1:3]
-    print row[0]
-    ds.addSample(row[1:3], row[0])
+    ds.addSample(row[0:in_count], row[in_count])
 
 
 # ========================================================
@@ -117,12 +126,25 @@ for row in df.itertuples(index=False):
 from pybrain.supervised.trainers import BackpropTrainer
 
 trainer = BackpropTrainer(net, ds)
-error = trainer.train()
-while error >= 0.005:
+error0 = trainer.train()
+errdiff = 10000
+while errdiff >= 0.000001:
     error = trainer.train()
-    print 'Error=%f' % error
+    errdiff = abs(error - error0)
+    error0 = error
+    print 'Error=%f, Diff=%f' % (error0, errdiff)
 
 
 # ========================================================
 #             Test the network
 # ========================================================
+
+sum_err = 0
+for row in df.itertuples(index=False):
+    result = net.activate(row[0:in_count])
+    expect = row[in_count]
+    error = (expect - result) ** 2
+    sum_err += error
+    print 'Result = %f, Expect = %f, Error = %f' % (result, expect, error)
+
+print 'Sum of error = %f' % sum_err

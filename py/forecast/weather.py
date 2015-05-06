@@ -37,6 +37,7 @@ def download(url):
         'http': 'http://theironislands.f.getqujing.net:49519'
     })
     opener = urllib2.build_opener(proxy)
+    opener.addheaders.append(('Cookie', 'Units=metric'))
     urllib2.install_opener(opener)
     return urllib2.urlopen(url).read()
 
