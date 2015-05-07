@@ -39,4 +39,32 @@ def create_ff_network(options):
     return net
 
 
+def train_network(net, ds, diff_error):
+    errors = []
+    trainer = BackpropTrainer(net, ds)
+    error = trainer.train()
+    errors.append(error)
+    diff = 10000
+    while diff >= diff_error:
+        error1 = trainer.train()
+        errors.append(error1)
+        diff, error = abs(error1 - error), error1
+        print 'Error=%f, Diff=%f' % (error1, diff)
 
+    return errors
+
+
+def validate_network(df, net, in_count):
+    results = []
+    sigma = 0
+    for row in df.itertuples(index=False):
+        result = net.activate(row[0:in_count])[0]
+        expect = row[in_count]
+        error = (expect - result) ** 2
+        results.append([result, expect, error])
+        sigma += error
+        print 'Result = %f, Expect = %f, Test Error = %f' % (result, expect, error)
+
+    print 'Sigma of testing error = %f' % sigma
+
+    return results

@@ -4,7 +4,6 @@ __author__ = 'yuanjie'
 from datetime import date
 import pandas as pd
 from pybrain.datasets import SupervisedDataSet
-from pybrain.supervised.trainers import BackpropTrainer
 import matplotlib.pyplot as plt
 import sampler
 import nn
@@ -44,28 +43,26 @@ for row in df.itertuples(index=False):
 #                 Training the network
 # ========================================================
 
-trainer = BackpropTrainer(net, ds)
-error = trainer.train()
-diff = 10000
-while diff >= 0.000001:
-    error1 = trainer.train()
-    diff, error = abs(error1 - error), error1
-    print 'Error=%f, Diff=%f' % (error1, diff)
+errors = nn.train_network(net, ds, 0.00001)
+err_df = pd.DataFrame(errors)
+err_df.columns = ['error']
+# print err_df.head()
 
+# DEBUG: Draw error plot
+err_df.plot()
+plt.show()
 
 # ========================================================
 #                  Test the network
 # ========================================================
 
-test_sigma = 0
-for row in df.itertuples(index=False):
-    result = net.activate(row[0:in_count])
-    expect = row[in_count]
-    error = (expect - result) ** 2
-    test_sigma += error
-    print 'Result = %f, Expect = %f, Test Error = %f' % (result, expect, error)
+test_results = nn.validate_network(df, net, in_count)
+test_df = pd.DataFrame(test_results)
+test_df.columns = ['result', 'expect', 'error']
 
-print 'Sigma of testing error = %f' % test_sigma
+# DEBUG: Draw testing results plot
+test_df.plot()
+plt.show()
 
 # ========================================================
 #                  Validate network
@@ -74,12 +71,11 @@ print 'Sigma of testing error = %f' % test_sigma
 # Load cross validate sample date
 cv = sampler.load_sample(date(2014, 5, 12), date(2014, 5, 18))
 
-cv_sigma = 0
-for row in cv.itertuples(index=False):
-    result = net.activate(row[0:in_count])
-    expect = row[in_count]
-    error = (expect - result) ** 2
-    cv_sigma += error
-    print 'Result = %f, Expect = %f, CV Error = %f' % (result, expect, error)
+# Run cross validate
+cv_results = nn.validate_network(cv, net, in_count)
+cv_df = pd.DataFrame(test_results)
+cv_df.columns = ['result', 'expect', 'error']
 
-print 'Sigma of cv error = %f' % test_sigma
+# DEBUG: Draw testing results plot
+cv_df.plot()
+plt.show()
