@@ -14,13 +14,6 @@ def create_ff_network(options):
     :return:
     """
 
-    if options is None:
-        options = {
-            'inUnitCount': 2,
-            'hiddenUnitCount': 3,
-            'outUnitCount': 1
-        }
-
     # Create FF network
     net = FeedForwardNetwork()
 
