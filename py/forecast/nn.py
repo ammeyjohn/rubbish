@@ -58,8 +58,8 @@ def validate_network(df, net, in_count):
     results = []
     sigma = 0
     for row in df.itertuples(index=False):
-        result = net.activate(row[0:in_count])[0]
-        expect = row[in_count]
+        result = net.activate(row[1:in_count+1])[0]
+        expect = row[0]
         error = (expect - result) ** 2
         results.append([result, expect, error])
         sigma += error

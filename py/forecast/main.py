@@ -9,7 +9,7 @@ import sampler
 import nn
 
 in_count = 4
-hidden_count = 5
+hidden_count = 4
 out_count = 1
 
 # ========================================================
@@ -18,7 +18,7 @@ out_count = 1
 
 start_date = date(2014, 5, 5)
 end_date = date(2014, 5, 11)
-df = sampler.load_sample(start_date, end_date)
+df = sampler.load_sample(start_date, end_date, 3)
 
 # ========================================================
 #                  Create FF Network
@@ -37,7 +37,8 @@ net = nn.create_ff_network(option)
 
 ds = SupervisedDataSet(in_count, out_count)
 for row in df.itertuples(index=False):
-    ds.addSample(row[0:in_count], row[in_count])
+    print '%s = %f' % (row[1:in_count+1], row[0])
+    ds.addSample(row[1:in_count+1], row[0])
 
 # ========================================================
 #                 Training the network
@@ -69,7 +70,7 @@ plt.show()
 # ========================================================
 
 # Load cross validate sample date
-cv = sampler.load_sample(date(2014, 5, 12), date(2014, 5, 18))
+cv = sampler.load_sample(date(2014, 5, 12), date(2014, 5, 18), 0)
 
 # Run cross validate
 cv_results = nn.validate_network(cv, net, in_count)
