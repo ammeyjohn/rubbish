@@ -37,3 +37,8 @@ bower_components
 # C#
 [Bb]in
 [Oo]bj
+
+# Visual Studio
+*.suo
+*.user
+packages/
