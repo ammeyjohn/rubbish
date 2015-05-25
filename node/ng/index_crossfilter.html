@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ngapp">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+    </style>
+</head>
+<body ng-controller='ngctrl'>
+
+    <button ng-click='filter()'>Show</button>
+
+    <table class='table'>
+        <tr ng-repeat='d in data'>
+            <td>{{d.Year}}-{{d.Month}}-{{d.DayofMonth}}</td>
+            <td>{{d.DepTime}}</td>
+            <td>{{d.ArrTime}}</td>
+            <td>{{d.FlightNum}}</td>
+            <td>{{d.TailNum}}</td>
+        </tr>
+    </table>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/crossfilter/crossfilter.min.js"></script>
+    <script src="data/data.js"></script>
+    <script>
+        angular.module('ngapp', [])
+            .controller('ngctrl', function($scope) { 
+                $scope.data = null;
+                $scope.filter = function() {
+                   $scope.data = data; 
+                }
+            });
+    </script>
+</body>
+</html>
