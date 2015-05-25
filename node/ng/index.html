@@ -4,64 +4,94 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/animate.css/animate.min.css">
+    <style>
+        .content {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 600px;
+            height: 600px;
+            border: solid 1px black;
+        }
+        .side_bar {
+            width: 300px;
+            height: 596px;
+            position: absolute;
+            top: 1px;
+            left: 600px;
+            border: solid 1px black;
+        }
+        .bottom_bar {
+            width: 596px;
+            height: 100px;
+            position: absolute;
+            top: 600px;
+            left: 1px;
+            border: solid 1px black;
+        }
+    </style>
 </head>
 <body ng-controller='ngctrl'>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Bi-Director binding</div>
-                <div class="panel-body">
-                    <form novalidate name="myform">
-                        <div class="form-group"
-                            ng-class="{ 
-                            'has-error': myform.email.$dirty && myform.email.$invalid, 
-                            'has-success': myform.email.$dirty && myform.email.$valid
-                            }">
-                            <label class="control-label" name="email">Your email</label>
-                            <input class="form-control" type="email" name="email"
-                            ng-model="email" placeholder="Email Address" required/>
-                            <div ng-messages="myform.email.$error"
-                                ng-messages-multiple>
-                                <span class="help-block" ng-message="email">The format of email is invalid.</span>
-                                <span class="help-block" ng-message="required">The field email is required.</span>
-                            </div>
-                        </div>
-                        <pre>
-                            $valid: {{myform.email.$valid}}
-                            $invalid: {{myform.email.$invalid}}
-                            $dirty: {{myform.email.$dirty}}
-                            $error: {{myform.email.$error}}
-                        </pre>
-                        <button class="btn btn-default" ng-click="show()">Click Me</button>
-                    </form>
-                </div>
-            </div>    
+
+    <div class='content'>
+        <input type='button' value='Show' style='float:right;' ng-click='show_sidebar()'></input>
+        <input type='button' value='Show' style='position:absolute; top:570px;
+        left:1px;' ng-click='show_bottombar()'></input>
+        <div class='side_bar'>
+            <button ng-click='hide_sidebar()'>Hide</button>
         </div>
-        <div class="col-lg-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Bi-Director binding</div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label class="control-label" name="email">Your email</label>
-                        <input class="form-control" type="email" name="email" ng-model="email" placeholder="Email Address" required/>
-                    </div>
-                </div>
-            </div>    
+        <div class='bottom_bar'>
+            <button ng-click='hide_bottombar()'>Hide</button>
         </div>
     </div>
+
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-messages/angular-messages.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <script>
-        angular.module('ngapp', ['ngMessages'])
+        angular.module('ngapp', ['ngAnimate'])
             .controller('ngctrl', function($scope) { 
-                $scope.email = "";
+                
+                var css_out_left = 'animated slideOutLeft';
+                var css_out_down = 'animated slideOutUp';
+                var css_in_left = 'animated slideInLeft';
+                var css_in_down = 'animated slideInDown';
 
-                $scope.show = function () {
-                    alert($scope.email);
+                $scope.show_sidebar = function() {
+                    $('.side_bar')
+                    .addClass(css_out_left)
+                    .one('webkitAnimationEnd', function(events) {
+                        $('.side_bar').removeClass(css_out_left).css('left', 297);
+                    });
+                }
+                $scope.hide_sidebar = function() {
+                    $('.side_bar')
+                    .css('left', 600)
+                    .addClass(css_in_left)
+                    .one('webkitAnimationEnd', function(events) {
+                        $('.side_bar').removeClass(css_in_left);
+                    });
+                }
+
+
+                $scope.show_bottombar = function() {
+                    $('.bottom_bar')
+                    .addClass(css_out_down)
+                    .one('webkitAnimationEnd', function(events) {
+                        $('.bottom_bar').removeClass(css_out_down).css('top', 497);
+                    });
+                }
+                $scope.hide_bottombar = function() {
+                    $('.bottom_bar')
+                    .css('top', 600)
+                    .addClass(css_in_down)
+                    .one('webkitAnimationEnd', function(events) {
+                        $('.bottom_bar').removeClass(css_in_down);
+                    })
                 }
             });
     </script>
