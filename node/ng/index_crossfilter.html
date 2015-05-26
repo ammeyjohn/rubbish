@@ -9,17 +9,36 @@
 </head>
 <body ng-controller='ngctrl'>
 
-    <button ng-click='filter()'>Show</button>
+    <button ng-click='show()'>show</button>
+    <button ng-click='filter(1000, 1500)'>filter</button>
+    <button ng-click='group()'>group</button>
 
-    <table class='table'>
-        <tr ng-repeat='d in data'>
-            <td>{{d.Year}}-{{d.Month}}-{{d.DayofMonth}}</td>
-            <td>{{d.DepTime}}</td>
-            <td>{{d.ArrTime}}</td>
-            <td>{{d.FlightNum}}</td>
-            <td>{{d.TailNum}}</td>
+    <table class='table table-striped'>
+        <tr>
+            <th>Date</th>
+            <th>Origin</th>
+            <th>Dest</th>
+            <th>FlightNum</th>
+            <th>DepTime</th>
+            <th>ArrTime</th>
+            <th>Distance</th>
+            <th>DepDelay</th>
+            <th>ArrDelay</th>
         </tr>
-    </table>
+        <tbody>
+            <tr ng-repeat='d in data track by $index'>
+                <td>{{d.Year}}-{{d.Month}}-{{d.DayofMonth}}</td>
+                <td>{{d.Origin}}</td>
+                <td>{{d.Dest}}</td>
+                <td>{{d.FlightNum}}</td>
+                <td>{{d.DepTime | time: d.DepTime}}</td>
+                <td>{{d.ArrTime | time: d.ArrTime}}</td>
+                <td>{{d.Distance}}</td>
+                <td>{{d.DepDelay}}</td>
+                <td>{{d.ArrDelay}}</td>
+            </tr>
+        </tbody>
+    </table>    
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -27,11 +46,36 @@
     <script src="bower_components/crossfilter/crossfilter.min.js"></script>
     <script src="data/data.js"></script>
     <script>
+
         angular.module('ngapp', [])
+            .filter('time', function() {
+                return function(time) {
+                    if (!time) { return ''; }
+                    var str = time.toString();
+                    if (str.length == 3)
+                        return '0' + str.substr(0, 1) + ":" + str.substr(1, 2)
+                    else return str.substr(0, 2) + ":" + str.substr(2, 2)
+                }
+            })
             .controller('ngctrl', function($scope) { 
-                $scope.data = null;
-                $scope.filter = function() {
-                   $scope.data = data; 
+
+                var flights = crossfilter(d);
+                var flightsByDistance = flights.dimension(function(d){ return d.Distance; });
+                var flightsByOrigin = flights.dimension(function(d){ return d.Origin; });
+
+                $scope.data = null;                
+                $scope.show = function() {
+                    $scope.data = flightsByDistance
+                        .filterAll()
+                        .top(Infinity);
+                }
+                $scope.filter = function(start, end) {
+                    $scope.data = flightsByDistance 
+                        .filterRange([start, end])
+                        .top(Infinity); 
+                }
+                $scope.group = function() {
+                        
                 }
             });
     </script>
