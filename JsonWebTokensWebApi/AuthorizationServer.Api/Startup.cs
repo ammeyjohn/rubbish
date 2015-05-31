@@ -4,6 +4,8 @@ using Microsoft.Owin;
 using Owin;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
+using AuthorizationServer.Api.Providers;
+using AuthorizationServer.Api.Formats;
 
 [assembly: OwinStartup(typeof(AuthorizationServer.Api.Startup))]
 
@@ -31,8 +33,9 @@ namespace AuthorizationServer.Api
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/oauth2/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
-                //Provider = new CustomOAuthProvider(),
+                Provider = new CustomOAuthProvider(),
                 //AccessTokenFormat = new CustomJwtFormat("http://jwtauthzsrv.azurewebsites.net")
+                AccessTokenFormat = new CustomJwtFormat("http://localhost:30625")
             };
 
             // OAuth 2.0 Bearer Access Token Generation
