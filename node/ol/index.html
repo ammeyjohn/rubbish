@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/openlayers3/build/ol.css">
+    <style>
+        .map {
+            width: 1200px;
+            height: 800px;
+            border: solid 1px black;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map" class="map"></div>
+    
+    <script src="bower_components/openlayers3/build/ol.js"></script>
+    <script>
+        
+    var layers = [
+        new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/sh/wms',
+                params: {
+                    'FORMAT': 'image/png',
+                    'LAYERS': 'sh:区县边界',
+                    'VERSION': '1.1.1'
+                },
+                serverType: 'geoserver'
+            })
+        }),
+        new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/sh/wms',
+                params: {
+                    'FORMAT': 'image/png',
+                    'LAYERS': 'sh:道路中心线',
+                    'VERSION': '1.1.1'
+                },
+                serverType: 'geoserver'
+            })
+        }),
+        new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/sh/wms',
+                params: {
+                    'FORMAT': 'image/png',
+                    'LAYERS': 'sh:道路双线',
+                    'VERSION': '1.1.1'
+                },
+                serverType: 'geoserver'
+            })
+        }),
+        new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/sh/wms',
+                params: {
+                    'FORMAT': 'image/png',
+                    'LAYERS': 'sh:建筑物',
+                    'VERSION': '1.1.1'
+                },
+                serverType: 'geoserver'
+            })
+        }),
+        new ol.layer.Vector({
+            source: new ol.source.GeoJSON({
+                //url: 'data.json',
+                url:
+                'http://localhost:8080/geoserver/sh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=sh:%E8%B4%A3%E4%BB%BB%E7%BD%91%E6%A0%BC&maxFeatures=50&outputFormat=application%2Fjson',
+                projection: 'EPSG:2908'
+            })
+        })
+    ];
+    var projection = new ol.proj.Projection({
+        code: 'EPSG:2908',
+        units: 'm',
+        axisOrientation: 'neu'
+    });
+    var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        view: new ol.View({
+            projection: projection
+        })
+    });
+    var bounds = [-54997.00073743053, -44070.96082316153,
+                  11065.125095523545, 4055.1939736594213];
+    map.getView().fitExtent(bounds, map.getSize());
+    </script>
+</body>
+</html>
